@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-
+import vn.hoidanit.jobhunter.domain.RestResponse;
 import vn.hoidanit.jobhunter.domain.User;
 import vn.hoidanit.jobhunter.service.UserService;
 import vn.hoidanit.jobhunter.service.Error.IdInvalidException;
@@ -27,14 +27,16 @@ public class UserController {
     }
 
     @GetMapping("/users/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable long id) {
-        // return ResponseEntity.status(HttpStatus.OK).body(this.userService.fetchUserById(id));
-        return ResponseEntity.ok(this.userService.fetchUserById(id));
+    public ResponseEntity<User> getUserById(@PathVariable("id") long id) {
+        User fetchUser = this.userService.fetchUserById(id);
+        // return ResponseEntity.ok(fetchUser);
+        return ResponseEntity.status(HttpStatus.OK).body(fetchUser);
     }
 
     @GetMapping("/users")
     public ResponseEntity<List<User>> getAllUser() {
-        // return ResponseEntity.status(HttpStatus.OK).body(this.userService.fetchAllUser());
+        // return
+        // ResponseEntity.status(HttpStatus.OK).body(this.userService.fetchAllUser());
         return ResponseEntity.ok(this.userService.fetchAllUser());
     }
 
@@ -51,11 +53,12 @@ public class UserController {
     }
 
     @DeleteMapping("/users/{id}")
-    public ResponseEntity<String> deleteUser(@PathVariable long id) throws IdInvalidException {
-        if(id >= 1500){
-            throw new IdInvalidException("Id khong duoc lon honw 1500");
+    public ResponseEntity<RestResponse> deleteUser(@PathVariable("id") long id) throws IdInvalidException {
+        if (id >= 1500) {
+            throw new IdInvalidException("ID không được lớn hơn 1500");
         }
         this.userService.handleDeleteUser(id);
-        return ResponseEntity.status(HttpStatus.OK).body("Xoá thành công");
+        RestResponse response = new RestResponse();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }
