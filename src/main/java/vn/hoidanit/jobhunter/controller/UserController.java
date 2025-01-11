@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,10 +20,13 @@ import vn.hoidanit.jobhunter.service.Error.IdInvalidException;
 
 @RestController
 public class UserController {
-    private final UserService userService;
 
-    public UserController(UserService userService) {
+    private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
+
+    public UserController(UserService userService, PasswordEncoder passwordEncoder) {
         this.userService = userService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @GetMapping("/users/{id}")
@@ -42,6 +45,8 @@ public class UserController {
 
     @PostMapping("/users")
     public ResponseEntity<User> createNewUser(@RequestBody User postManUser) {
+        String hashpasswrod = this.passwordEncoder.encode(postManUser.getPassword());
+        postManUser.setPassword(hashpasswrod);
         User newUser = this.userService.handleCreateUser(postManUser);
         return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
     }
@@ -54,10 +59,13 @@ public class UserController {
 
     @DeleteMapping("/users/{id}")
     public ResponseEntity<RestResponse> deleteUser(@PathVariable("id") long id) throws IdInvalidException {
+
         if (id >= 1500) {
             throw new IdInvalidException("ID không được lớn hơn 1500");
         }
+
         this.userService.handleDeleteUser(id);
+
         RestResponse response = new RestResponse();
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }

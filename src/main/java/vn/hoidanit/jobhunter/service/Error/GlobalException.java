@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import vn.hoidanit.jobhunter.domain.RestResponse;
 
 @RestControllerAdvice
-
 public class GlobalException {
     @ExceptionHandler(value = IdInvalidException.class)
     public ResponseEntity<RestResponse<Object>> handleIdException(IdInvalidException idException) {
