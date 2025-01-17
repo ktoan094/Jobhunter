@@ -30,6 +30,7 @@ public class UserService {
 
     public ResultPaginationDTO fetchAllUser(Pageable pageable) {
         Page<User> pageUser = this.userRepository.findAll(pageable);
+
         ResultPaginationDTO rs = new ResultPaginationDTO();
 
         Meta mt = new Meta();
